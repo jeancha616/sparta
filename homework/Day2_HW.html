@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>N.Flying Official Light Stick_copy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Song Myung', serif;
+        }
+
+        .wrap {
+            margin: auto;
+            width: 700px;
+        }
+
+        .mytitle {
+            color: black;
+            width: 700px;
+            height: 200px;
+            background-image: url(https://pbs.twimg.com/media/EW6RQDjU0AAOaX7.jpg);
+            background-position: center;
+            background-size: cover;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .button {
+            margin: auto;
+            width: 65px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        function hey() {
+            let name = $('#inputname').val();
+            let quantity = $('#inputGroupSelect01').val();
+            let adress = $('#inputadress').val();
+            let contact = $('#inputcontact').val();
+
+            if (name == '') {
+                alert('성함을 입력하세요!');
+            }
+            else if (quantity == '') {
+                alert('수량을 선택하세요!');
+            }
+            else if (adress == '') {
+                alert('주소를 입력하세요!');
+            }
+            else if (contact == '') {
+                alert('연락처를 입력하세요!');
+            }
+            else {
+                alert('주문완료!')
+            }
+
+        }
+
+        $(document).ready(function () {
+            alert('로딩완료');
+
+            $.ajax({
+            type: "GET",
+            url: "https://api.manana.kr/exchange/rate.json",
+            data: {},
+            success: function (response) {
+                let dollar_rate = response[1]['rate'];
+                console.log(dollar_rate);
+                $('#dollar_rate').append(dollar_rate);
+            }
+        })
+        })
+    </script>
+
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="mytitle">
+            <h1>N.Flying Official Light Stick</h1>
+        </div>
+
+        <div class="item_title">
+            <b><span style="font-size: 20px;">N.Flying 1st Official Light Stick</span></b></span>
+            <span style="font-size: 15px;">가격: 38,000원/개</span>
+        </div>
+
+        <div class="item_contents">
+            <p>N.Flying의 첫 공식 응원봉을 판매합니다</p>
+            <p>추첨을 통해 <span style="color: red;"> 미공개 포토카드</span> 가 증정되니 많은 N.Fia 여러분의 관심 바랍니다.</p>
+        </div>
+
+        <div class="dollar_rate">
+            <p>달러환율: <span id="dollar_rate" style="color: cornflowerblue;" style="font-weight: bold;"></span>원</p>
+        </div>
+
+        <p><b><span style="font-size: 20px;">주문하기</span></b></p>
+
+        <div class="input">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">주문자 성함</span>
+                </div>
+                <input id="inputname" type="text" class="form-control" aria-label="Default"
+                    aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected>수량을 선택하세요.</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">4</option>
+                    <option value="3">5</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">주소</span>
+                </div>
+                <input id="inputadress" type="text" class="form-control" aria-label="Username"
+                    aria-describedby="basic-addon1" placeholder="ex. 서울특별시 송파구 신천동">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">연락처</span>
+                </div>
+                <input id="inputcontact" type="text" class="form-control" aria-label="Username"
+                    aria-describedby="basic-addon1">
+            </div>
+
+        </div>
+
+        <div class="button">
+            <button onclick="hey()" type="button" class="btn btn-primary">주문하기</button>
+        </div>
+
+</body>
+
+</html>
