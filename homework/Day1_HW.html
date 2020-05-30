@@ -91,3 +91,15 @@
 </body>
 
 </html>
+
+
+$.ajax({
+    type: "GET",
+    url: "https://api.manana.kr/exchange/rate.json",
+    data: {},
+    success: function (response) {
+    let dollar_rate = response[1]['rate'];
+    console.log(dollar_rate);
+    $('#dollar_rate').append(dollar_rate);
+    }
+    })
