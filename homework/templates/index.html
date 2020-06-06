@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <title>N.Flying Official Light Stick_copy</title>
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Song Myung', serif;
+        }
+
+        .wrap {
+            margin: auto;
+            width: 700px;
+        }
+
+        .mytitle {
+            color: black;
+            width: 700px;
+            height: 200px;
+            background-image: url(https://pbs.twimg.com/media/EW6RQDjU0AAOaX7.jpg);
+            background-position: center;
+            background-size: cover;
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        .button {
+            margin: auto;
+            width: 70px;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            listing();
+
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let dollar_rate = response[1]['rate'];
+                    console.log(dollar_rate);
+                    $('#dollar_rate').append(dollar_rate);
+                }
+            })
+        });
+
+        function makeorder() {
+            // 1. 주문자 이름/수량/주소/전화번호를 가져옵니다.
+            let name = $('#inputname').val();
+            let quantity = $('#inputGroupSelect01').val();
+            let adress = $('#inputadress').val();
+            let contact = $('#inputcontact').val();
+
+            // 2. 주문자 이름/수량/주소/전화번호를 입력하지 않았을 경우 alert를 띄웁니다.
+            if (name == '') {
+                alert('성함을 입력해 주세요');
+                return;
+            } else if (quantity == '') {
+                alert('수량을 선택해 주세요');
+                return;
+            } else if (adress == '') {
+                alert('주소를 입력해 주세요');
+                return;
+            } else if (contact == '') {
+                alert('전화번호를 입력해 주세요');
+                return;
+            }
+            // 3. POST / 주문하기 에 저장을 요청합니다.
+            $.ajax({
+                type: "POST",
+                url: "/orders",
+                data: { name_give: name, quantity_give: quantity, adress_give: adress, contact_give: contact },
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        alert(response['msg']);
+                        window.location.reload();
+                    }
+                }
+            });
+        }
+
+        function listing() {
+            // 1. 주문자 정보를 서버에 요청합니다.
+            // 2. 요청 성공 여부를 확인합니다.
+            $.ajax({
+                type: "GET",
+                url: "/orders",
+                data: {},
+                success: function (response) {
+            // 3. 요청 성공했을 때, 주문자 정보를 올바르게 화면에 나타냅니다.
+                    if (response['result'] == 'success') {
+                        let orders = response['all_order'];
+
+                        for(let i = 0; i < orders.length; i++){
+                            let order = orders[i];
+
+                            let name = order['name'];
+                            let quantity = order['quantity'];
+                            let adress = order['adress'];
+                            let contact = order['contact'];
+
+                            let temp_html = `<tr>
+                                            <td>${name}</td>
+                                            <td>${quantity}</td>
+                                            <td>${adress}</td>
+                                            <td>${contact}</td>
+                                            </tr>`
+                            $('#orders_list').append(temp_html)
+                        }
+                    } else {
+                        alert('주문을 접수하지 못했습니다');
+                    }
+                }
+            });
+        }
+    </script>
+
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="mytitle">
+            <h1>N.Flying Official Light Stick</h1>
+        </div>
+
+        <div class="item_title">
+            <b><span style="font-size: 20px;">N.Flying 1st Official Light Stick</span></b></span>
+            <span style="font-size: 15px;">가격: 38,000원/개</span>
+        </div>
+
+        <div class="item_contents">
+            <p>N.Flying의 첫 공식 응원봉을 판매합니다</p>
+            <p>추첨을 통해 <span style="color: red;"> 미공개 포토카드</span> 가 증정되니 많은 N.Fia 여러분의 관심 바랍니다.</p>
+        </div>
+
+        <div class="dollar_rate">
+            <p>달러환율: <span id="dollar_rate" style="color: cornflowerblue;" style="font-weight: bold;"></span>원</p>
+        </div>
+
+        <p><b><span style="font-size: 20px;">주문하기</span></b></p>
+
+        <div class="input">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-default">주문자 성함</span>
+                </div>
+                <input id="inputname" type="text" class="form-control" aria-label="Default"
+                    aria-describedby="inputGroup-sizing-default">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected value="">수량을 선택하세요.</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="3">4</option>
+                    <option value="3">5</option>
+                </select>
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">주소</span>
+                </div>
+                <input id="inputadress" type="text" class="form-control" aria-label="Username"
+                    aria-describedby="basic-addon1" placeholder="ex. 서울특별시 송파구 신천동">
+            </div>
+
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1">연락처</span>
+                </div>
+                <input id="inputcontact" type="text" class="form-control" aria-label="Username"
+                    aria-describedby="basic-addon1">
+            </div>
+
+        </div>
+
+        <div class="button">
+            <button onclick="makeorder()" type="button" class="btn btn-primary">주문하기</button>
+        </div>
+
+        <p></p>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">이름</th>
+                    <th scope="col">수량</th>
+                    <th scope="col">주소</th>
+                    <th scope="col">전화번호</th>
+                </tr>
+            </thead>
+            <tbody id="orders_list">
+            </tbody>
+        </table>
+    </div>    
+</body>
+
+</html>

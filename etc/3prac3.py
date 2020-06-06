@@ -14,7 +14,7 @@ print(john)
 
 # 생김새
 # db.people.update_many(찾을조건,{ '$set': 어떻게바꿀지 })
-#many는 잘 안쓴다. 손목잘라야하니까
+# many는 잘 안쓴다. 손목잘라야하니까
 
 # 예시 - 오타가 많으니 이 줄을 복사해서 씁시다!
 db.users.update_one({'name':'bobby'},{'$set':{'age':19}})
