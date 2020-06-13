@@ -51,7 +51,7 @@ def saving():
         }
     #articles라는 이름으로 DB를 저장한다
     db.articles.insert_one(doc)
-
+    
     return jsonify({'result': 'success', 'msg':'저장이 완료되었습니다'})
 
 if __name__ == '__main__':
