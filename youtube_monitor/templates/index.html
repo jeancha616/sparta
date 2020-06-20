@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+        integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+        integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+        crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+        integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+        crossorigin="anonymous"></script>
+
+    <!--폰트지정-->
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            font-family: 'Nanum Myeongjo', serif;
+        }
+
+        .wrap {
+            margin: auto;
+            width: 1000px;
+        }
+
+        .jumbotron {
+            text-align: center;
+        }
+
+        .form-post {
+            margin: auto;
+            width: 800px;
+        }
+
+        .button {
+            margin: auto;
+            width: 100px;
+        }
+
+        .monitor {
+            margin: auto;
+            width: 800px
+        }
+
+        #input-box {
+            display: none;
+        }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <script>
+        function openclose() {
+            if ($('#input-box').css('display') == 'block') {
+                $('#input-box').hide();
+                $('#btn-input-box').text('Contents Input')
+            } else {
+                $('#input-box').show();
+                $('#btn-input-box').text('Close')
+            }
+        }
+
+        $(document).ready(function () {
+            $('#cards-box').html('');
+            listing();
+        });
+
+        function listing() {
+            if ($('#input-url').val() == '') {
+                alert('Please Paste YouTube Link');
+            }
+            else {
+                alert('Input Completed')
+            }
+
+            $.ajax({
+                type: "GET",
+                url: "/monitor",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let monitors = response['monitors'];
+
+                        for(let i = 0; i < monitors.length ; i++){
+                        let monitor = monitors[i];
+                        // 변수 4개를 꺼내온다 
+                        let thumbnail = monitor['thumbnail'];
+                        let title = monitor['title'];
+                        let date = monitor['date'];
+                        let comment = monitor['comment']
+
+                        make_card(thumbnail, title, date, comment)    
+
+                        }
+                    }
+                }
+            })
+        }
+
+        function make_card(thumbnail, title, date, comment) {
+            let temp_html = `<div class="monitor" id="monitor">
+                                <div class="card" style="width: 50rem;">
+                                    <img class="card-img-top" id="thumbnail" src="${thumbnail}" alt="thumbnail">
+                                    <div class="card-body">
+                                        <h5 class="card-title" id="input-title">${title}</h5>
+                                        <ul class="list-group list-group-flush">
+                                            <li class="list-group-item" id="input-date">${date}</li>
+                                            <li class="list-group-item" id="input-comment">${comment}</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>`
+            $('#cards-box').append(temp_html);
+        }
+
+        function posting(){
+            // 코드를 뭐 어떻게 써야 할까
+            
+            $.ajax({
+                type: "POST",
+                url: "/monitor",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        
+                    }
+                }
+            })
+        }
+
+    </script>
+</head>
+
+
+<body>
+    <div class="wrap">
+        <div class="jumbotron">
+            <h1 class="display-4"><span style="font-size:45px;" style="font-weight:bold;">YouTube Contents
+                    Monitoring</span></h1>
+            <p></p>
+            <p class="lead"><span style="font-size:20px;">YouTube 링크를 통해, 게시물 정보(제목/조회수/좋아요/댓글)를 실시간으로 불러옵니다</span></p>
+            <hr class="my-4">
+            </hr>
+            <p class="lead">
+                <a id="btn-input-box" onclick="openclose()" class="btn btn-dark btn-lg btn-block" href="#"
+                    role="button">Contents Input</a>
+        </div>
+
+        <div class="form-post" id="input-box">
+            <div>
+                <div class="form-group">
+                    <label for="exampleFormControlInput1">Contents URL</label>
+                    <input id="input-url" class="form-control" placeholder="Paste YouTube Link">
+                </div>
+
+                <div class="button">
+                    <button onclick="posting()" class="btn btn-primary btn-dark">Load</button>
+                </div>
+            </div>
+        </div>
+
+        <p></p>
+
+        <div class="monitor" id="monitor">
+            <div class="card" style="width: 50rem;">
+                <img class="card-img-top" id="thumbnail" , alt="thumbnail">
+                <div class="card-body">
+                    <h5 class="card-title" id="input-title">Contents title</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item" id="input-date">date</li>
+                        <li class="list-group-item" id="input-comment">comment</li>
+                    </ul>
+                </div>
+            </div>
+        </div>    
+        
+</body>
