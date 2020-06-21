@@ -23,10 +23,12 @@ def listing():
     return jsonify({'result':'success', 'monitors' : all_monitors})
 
 ## API 역할을 하는 부분
-## API: 원래 하고 싶었던 것은, 입력한 url에서 정보를 끌어오는 것
-## API: 현재는 YouTube 채널에서 가장 최근 N개 게시물의 정보를 불러옴
+
 @app.route('/monitor', methods=['POST'])
 def monitoring():
+    # https://www.youtube.com/channel/UC8HNshpReWjQv1WpwzhPHjA 여기서 채널정보만 뜯어와서 api를 작동시키려면? 
+    # url_receive = request.form['url_give']
+  
     api = 'https://www.googleapis.com/youtube/v3/search?key=AIzaSyC2m2Jh9ddGZhMcg8L3JwhZ6qiSHg9gr7k&channelId=UC8HNshpReWjQv1WpwzhPHjA&part=snippet&maxResults=1&order=date'
     data = requests.get(api)
     json_data = json.loads(data.text)  # json_data 를 파싱
