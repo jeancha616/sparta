@@ -2,9 +2,13 @@
 <html lang="en">
 
 <head>
-    <!-- Required meta tags -->
+    <!-- Required meta tags : unseen area -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <meta property="og:title" content="YouTube Contents Monitoring" />
+    <meta property="og:description" content="YouTube Contents의 댓글을 실시간으로 불러 옵니다 :)" />
+    <meta property="og:image" content="{{ url_for('static', filename='ogimage.JPG') }}" />
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
@@ -57,6 +61,7 @@
         #input-box {
             display: none;
         }
+
     </style>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -78,13 +83,6 @@
         });
 
         function listing() {
-            if ($('#input-url').val() == '') {
-                alert('Please Paste YouTube Link');
-            }
-            else {
-                alert('Input Completed')
-            }
-
             $.ajax({
                 type: "GET",
                 url: "/monitor",
@@ -94,30 +92,65 @@
                         let monitors = response['monitors'];
 
                         for(let i = 0; i < monitors.length ; i++){
-                        let monitor = monitors[i];
-                        // 변수 4개를 꺼내온다 
-                        let thumbnail = monitor['thumbnail'];
-                        let title = monitor['title'];
-                        let date = monitor['date'];
-                        let comment = monitor['comment']
+                            let monitor = monitors[i];
 
-                        make_card(thumbnail, title, date, comment)    
+                            // 변수 6개를 꺼내온다 
+                            
+                            let thumbnail = monitor['thumbnail'];
+                            let url = monitor['url'];
+                            let title = monitor['title'];
+                            let date = monitor['date'];
+                            let now = monitor['now']; 
+                            let temp_list = monitor['comment'];
+                            
+                            let comment_list = ''
+                            for (let i = 0 ; i < temp_list.length ; i++){
 
+                                comment_list = comment_list + temp_list[i] + '<br>'
+                                
+                            }
+                            
+                            make_card(thumbnail, url, title, date, now, comment_list) 
                         }
                     }
                 }
             })
         }
 
-        function make_card(thumbnail, title, date, comment) {
+        function make_card(thumbnail, url, title, date, now, comment_list) {
             let temp_html = `<div class="monitor" id="monitor">
                                 <div class="card" style="width: 50rem;">
-                                    <img class="card-img-top" id="thumbnail" src="${thumbnail}" alt="thumbnail">
+                                    <img class="card-img-top" src="${thumbnail}" id="thumbnail" alt="thumbnail">
                                     <div class="card-body">
-                                        <h5 class="card-title" id="input-title">${title}</h5>
+                                        <a href="${url}" id="title"><p class="text-center"><strong>${title}</strong></a></p>
                                         <ul class="list-group list-group-flush">
-                                            <li class="list-group-item" id="input-date">${date}</li>
-                                            <li class="list-group-item" id="input-comment">${comment}</li>
+                                            <li class="list-group-item" id="date"><p class="text-center">${date}</li></p>
+                                            <li class="list-group-item" id="monitor_when"><span style="color: red;"><p class="text-center">${now}</span></li></p>
+                                            
+                                            <!-- Button trigger modal -->
+                                            <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModalLong">Comment</button>
+                                            <p></p>
+                                            <button type="button" class="btn btn-outline-danger" onclick="delete_monitoring('${now}')">Delete</button>
+                                           
+                                            <!-- Modal -->
+                                            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLongTitle">Comment</h5>
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                    <span aria-hidden="true">&times;</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    ${comment_list}
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
                                         </ul>
                                     </div>
                                 </div>
@@ -125,19 +158,46 @@
             $('#cards-box').append(temp_html);
         }
 
-        function posting(){
-            // 코드를 뭐 어떻게 써야 할까
+        function monitoring(){
+            let url = $('#input-url').val();
+
+            if ($('#input-url').val() == '') {
+                alert('Please Paste YouTube Link');
+            } else {
+                alert('Please Hold On...')
+            }
             
             $.ajax({
                 type: "POST",
                 url: "/monitor",
-                data: {},
+                data: {url_give : url},
                 success: function (response) {
                     if (response['result'] == 'success') {
-                        
+                       let msg = response['msg'];
+                       alert(msg);
+                        window.location.reload()
                     }
                 }
             })
+        }
+        
+        function delete_monitoring(now){
+            $.ajax({
+                type: "POST",
+                url: "/monitor/delete",
+                data: {now_give : now},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        var delete_monitoring = confirm("확인(예) 또는 취소(아니오)를 선택해주세요.");
+                        if (delete_monitoring == true) {
+                            alert("삭제하겠습니다");
+                            window.location.reload();
+                        } else if (delete_monitoring == false) {
+                            alert("취소하셨습니다");
+                        }
+                    }
+                }
+            });
         }
 
     </script>
@@ -150,7 +210,7 @@
             <h1 class="display-4"><span style="font-size:45px;" style="font-weight:bold;">YouTube Contents
                     Monitoring</span></h1>
             <p></p>
-            <p class="lead"><span style="font-size:20px;">YouTube 링크를 통해, 게시물 정보(제목/조회수/좋아요/댓글)를 실시간으로 불러옵니다</span></p>
+            <p class="lead"><span style="font-size:20px;">YouTube 링크를 통해, 실시간 댓글을 불러옵니다</span></p>
             <hr class="my-4">
             </hr>
             <p class="lead">
@@ -166,7 +226,7 @@
                 </div>
 
                 <div class="button">
-                    <button onclick="posting()" class="btn btn-primary btn-dark">Load</button>
+                    <button onclick="monitoring()" class="btn btn-primary btn-dark">monitor</button>
                 </div>
             </div>
         </div>
@@ -174,16 +234,41 @@
         <p></p>
 
         <div class="monitor" id="monitor">
-            <div class="card" style="width: 50rem;">
-                <img class="card-img-top" id="thumbnail" , alt="thumbnail">
+            <div class="card" id="cards-box" style="width: 50rem;">
+                <img class="card-img-top" id="thumbnail" alt="thumbnail">
                 <div class="card-body">
-                    <h5 class="card-title" id="input-title">Contents title</h5>
+                    <h5 class="card-title" id="title" a href="#">Contents title</h5>
                     <ul class="list-group list-group-flush">
-                        <li class="list-group-item" id="input-date">date</li>
-                        <li class="list-group-item" id="input-comment">comment</li>
+                        <li class="list-group-item" id="date">date</li>
+                        
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-dark" data-toggle="modal" data-target="#exampleModalLong">
+                            Comment
+                            </button>
+
+                            <!-- Modal -->
+                            <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog" aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="exampleModalLongTitle">Comment</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    ${comment_list}
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-dark" data-dismiss="modal">Close</button>
+                                </div>
+                                </div>
+                            </div>
+                            </div>
                     </ul>
                 </div>
             </div>
         </div>    
-        
+    </div>
+
 </body>
